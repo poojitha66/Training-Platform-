@@ -64,7 +64,7 @@ Before you begin, ensure you have:
 1. **Clone and Install**
    ```bash
    git clone <repository-url>
-   cd training-platform
+   cd trainpro-platform
    npm install
    ```
 
