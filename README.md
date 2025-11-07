@@ -45,8 +45,9 @@ A comprehensive enterprise-grade platform for managing training programs and rec
 ## 🛠 Technology Stack
 
 - **Frontend**: Next.js 14, TypeScript, Tailwind CSS
-- **Backend**: Supabase (PostgreSQL), Row Level Security
-- **Authentication**: Supabase Auth with role-based access
+- **Backend**: Ruby on Rails API (PostgreSQL)
+- **Authentication**: JWT with bcrypt-protected passwords
+- **Payments**: Stripe Checkout sessions
 - **UI Components**: Custom components with Headless UI
 - **Charts**: Recharts for analytics
 - **Icons**: Lucide React
@@ -54,28 +55,36 @@ A comprehensive enterprise-grade platform for managing training programs and rec
 ## 📋 Prerequisites
 
 Before you begin, ensure you have:
-- Node.js 18+ installed
-- A Supabase account and project
+- Node.js 18+
+- Ruby 3.2+
+- Bundler (`gem install bundler`)
+- PostgreSQL 13+
 - (Optional) AWS S3 or Azure Blob storage account
 - (Optional) Zoom developer account for integration
 
 ## 🚀 Quick Start
 
-1. **Clone and Install**
+1. **Clone and Install Frontend Dependencies**
    ```bash
    git clone <repository-url>
    cd trainpro-platform
    npm install
    ```
 
-2. **Set up Supabase**
-   - Click the "Connect to Supabase" button in the top right
-   - Follow the setup wizard to configure your database
-   - The database schema will be automatically created
-
-3. **Start Development**
+2. **Configure the Rails API Backend**
    ```bash
-   npm run dev
+   cd backend
+   bundle install
+   cp .env.example .env # create this file if it does not exist and add your secrets
+   bundle exec rails db:create db:migrate
+   bundle exec rails s -p 3001
+   ```
+   The backend will serve JSON at `http://localhost:3001/api`. Leave this process running.
+
+3. **Start the Frontend (new terminal)**
+   ```bash
+   cd trainpro-platform
+   NEXT_PUBLIC_API_BASE_URL=http://localhost:3001/api npm run dev
    ```
 
 4. **Access the Platform**
@@ -121,10 +130,26 @@ Password for all demo accounts: `demo123`
 ## 🔧 Configuration
 
 ### Environment Variables
+
+**Frontend (`.env.local`)**
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001/api
+```
+
+**Backend (`backend/.env` or credentials)**
+```env
+DB_HOST=localhost
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+DB_NAME=backend_development
+DB_TEST_NAME=backend_test
+DB_PRODUCTION_NAME=backend_production
+
+JWT_SECRET=your_jwt_secret
+STRIPE_SECRET_KEY=sk_test_...
+CORS_ORIGINS=http://localhost:3000,http://localhost:3001
+CHECKOUT_SUCCESS_URL=http://localhost:3000/success
+CHECKOUT_CANCEL_URL=http://localhost:3000/cancel
 
 # Optional integrations
 ZOOM_API_KEY=your_zoom_api_key
